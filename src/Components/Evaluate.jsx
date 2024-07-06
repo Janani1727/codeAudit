@@ -9,15 +9,29 @@ const Evaluate = () => {
   const [userCode, setUserCode] = useState("");
   const [answer, setAnswer] = useState("");
   const [generatingAnswer, setGeneratingAnswer] = useState(false);
-  const [language, setLanguage] = useState("javascript"); // State to manage the selected language
+  const [language, setLanguage] = useState("javascript");
 
   async function generateAnswer(e) {
     setGeneratingAnswer(true);
     e.preventDefault();
     setAnswer("Loading your answer... \n It might take a few seconds");
 
-    const modifiedQuestion = `I have written the following code in ${language}, please suggest ways to improve the code and give suggestions to optimize the code and suggest improvements in naming standards, code quality, etc. Also paste the whole code and add comments in between the code on how we can improve the code. Don't write the solution of the code.\n\n${userCode}`;
+    // const modifiedQuestion = `I have written the following code in ${language}, please suggest ways to improve the code and give suggestions to optimize the code and suggest improvements in naming standards, code quality, etc. Also paste the whole code and add comments in between the code on how we can improve the code. Don't write the solution of the code.\n\n${userCode}`;
 
+    const modifiedQuestion = `${question} ,${userCode}.I have written the  code in ${language}.
+
+Provide a feedback that guide coder towards code optimization and improvement, without providing exact solutions.
+
+Give the feedback in JSON format whose key will be title and value will be the feedaback.
+
+- Inline comments or annotations highlighting areas for improvement in the code.
+ suggestions for better coding practices.
+- Summary report at the end outlining strengths and areas for improvement.
+
+follow the below sample and give the feedback for the above code in this format.
+{ "title": "Code Review: deftwo_sum_brute_force", "feedback": { "Inline Comments": [ // Loop 1 (i): Iterates through all elements in nums. "for i in range(len(nums)):", " // Consider if there's a way to avoid visiting the same element twice?", // Loop 2 (j): Starts from i+1 to avoid duplicate pairs. " for j in range(i + 1, len(nums)):", " // Could this loop be optimized if we have additional information about nums?" ], "Suggestions": [ "Explore using a hash table for potentially faster lookups (average time complexity of O(n)).", "Consider the problem constraints. Can you leverage any properties of the input data (nums) for optimization?" ] }, "summary": { "Strengths": [ "Clear and concise implementation using nested loops.", "Correctly identifies the pair that adds up to the target." ], "Areas for Improvement": [ "Time complexity could be improved for larger datasets (current complexity is O(n^2)).", "Consider using more descriptive variable names (e.g., instead of i and j, use index1 and index2)." ] } }
+
+the inline comments key should always hold the users code with inline comment for the same regarding chnages/suggestions`;
     try {
       const response = await axios({
         url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyCdxILuLbVq4Z8Ila7yfWYQ2PnN6zP2ekU`,
@@ -96,7 +110,7 @@ const Evaluate = () => {
                 defaultLanguage={language}
                 defaultValue="// Enter your code here"
                 onChange={(value) => setUserCode(value)}
-                 theme="vs-dark"
+                theme="vs-dark"
                 options={{ resize: true }}
               />
             </Box>
